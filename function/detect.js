@@ -1,31 +1,31 @@
 const ort = require("onnxruntime-node");
-const multer = require("multer");
+//const multer = require("multer");
 const sharp = require("sharp");
-const fs = require("fs");
+//const fs = require("fs");
 
 /**
  * Main function that setups and starts a
  * web server on port 8080
  */
 function main() {
-    const upload = multer();
+    // const upload = multer();
 
     /**
      * The site root handler. Returns content of index.html file.
      */
-    app.get("/", (req,res) => {
-        res.end(fs.readFileSync("index.html", "utf8"))
-    })
+    // app.get("/", (req,res) => {
+    //     res.end(fs.readFileSync("index.html", "utf8"))
+    // })
 
     /**
      * The handler of /detect endpoint that receives uploaded
      * image file, passes it through YOLOv8 object detection network and returns
      * an array of bounding boxes in format [[x1,y1,x2,y2,object_type,probability],..] as a JSON
      */
-    app.post('/detect', upload.single('image_file'), async function (req, res) {
-        const boxes = await detect_objects_on_image(req.file.buffer);
-        res.json(boxes);
-    });
+    // app.post('/detect', upload.single('image_file'), async function (req, res) {
+    //     const boxes = await detect_objects_on_image(req.file.buffer);
+    //     res.json(boxes);
+    // });
 
     // app.listen(8080, () => {
     //     console.log(`Server is listening on port 8080`)
@@ -171,10 +171,15 @@ const yolo_classes = ['Adidas', 'Apple', 'BMW', 'Citroen', 'Cocacola', 'DHL', 'F
 
 
 
-module.exports.handler = async (event, context) => {
+module.exports.handler = async (event) => {
     try {
       // Your code here
-      main();
+      const { buffer } = event.body;
+      const boxes = detect_objects_on_image(buffer);
+      return {
+        statusCode : 200,
+        body : JSON.stringify(boxes),
+      }
     } catch (error) {
       return {
         statusCode: 500,
