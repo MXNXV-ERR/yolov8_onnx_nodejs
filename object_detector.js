@@ -77,9 +77,10 @@ async function prepare_input(buf) {
  * @returns Raw output of neural network as a flat array of numbers
  */
 async function run_model(input) {
-    const model = await ort.InferenceSession.create("yolov8m.onnx");
+    const model = await ort.InferenceSession.create("bestv8.onnx");
     input = new ort.Tensor(Float32Array.from(input),[1, 3, 640, 640]);
     const outputs = await model.run({images:input});
+    //sconsole.log(outputs);
     return outputs["output0"].data;
 }
 
@@ -110,8 +111,8 @@ function process_output(output, img_width, img_height) {
         const x2 = (xc+w/2)/640*img_width;
         const y2 = (yc+h/2)/640*img_height;
         boxes.push([x1,y1,x2,y2,label,prob]);
+        console.log("\n"+label + "   "+prob)
     }
-
     boxes = boxes.sort((box1,box2) => box2[5]-box1[5])
     const result = [];
     while (boxes.length>0) {
@@ -168,15 +169,6 @@ function intersection(box1,box2) {
 /**
  * Array of YOLOv8 class labels
  */
-const yolo_classes = [
-    'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat',
-    'traffic light', 'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse',
-    'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase',
-    'frisbee', 'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard',
-    'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',
-    'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch', 'potted plant',
-    'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 'oven',
-    'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush'
-];
+const yolo_classes = ['Adidas', 'Apple', 'BMW', 'Citroen', 'Cocacola', 'DHL', 'Fedex', 'Ferrari', 'Ford', 'Google', 'Heineken', 'HP', 'Intel', 'McDonalds', 'Mini', 'Nbc', 'Nike', 'Pepsi', 'Porsche', 'Puma', 'RedBull', 'Sprite', 'Starbucks', 'Texaco', 'Unicef', 'Vodafone', 'Yahoo'];
 
 main()

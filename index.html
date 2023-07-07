@@ -51,13 +51,13 @@
               ctx.strokeStyle = "#00FF00";
               ctx.lineWidth = 3;
               ctx.font = "18px serif";
-              boxes.forEach(([x1,y1,x2,y2,label]) => {
+              boxes.forEach(([x1,y1,x2,y2,label,prob]) => {
                   ctx.strokeRect(x1,y1,x2-x1,y2-y1);
                   ctx.fillStyle = "#00ff00";
                   const width = ctx.measureText(label).width;
-                  ctx.fillRect(x1,y1,width+10,25);
+                  ctx.fillRect(x1,y1,width+50,25);
                   ctx.fillStyle = "#000000";
-                  ctx.fillText(label, x1, y1+18);
+                  ctx.fillText(label+" C: "+prob, x1, y1+18);
               });
           }
       }
