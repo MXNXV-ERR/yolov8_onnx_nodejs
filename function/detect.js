@@ -179,7 +179,7 @@ module.exports.handler = async (event) => {
       const boxes = detect_objects_on_image(buffer);
       return {
         statusCode : 200,
-        body : JSON.stringify(boxes),
+        body : JSON.stringify(boxes+"hello"),
       }
     } catch (error) {
       return {
