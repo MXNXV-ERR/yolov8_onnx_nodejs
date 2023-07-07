@@ -1,12 +1,13 @@
 {
   "name": "object_detector",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is a web interface to [YOLOv8 object detection neural network](https://ultralytics.com/yolov8)\r implemented on [Node.js](https://www.nodejs.org).",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node object_detector.js"
   },
-  "author": "",
+  "author": "MXNXV-ERR",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
