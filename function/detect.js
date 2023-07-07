@@ -39,6 +39,7 @@ function main() {
  * @returns Array of bounding boxes in format [[x1,y1,x2,y2,object_type,probability],..]
  */
 async function detect_objects_on_image(buf) {
+    console.log("Heartbeat of serverless fn`s");
     const [input,img_width,img_height] = await prepare_input(buf);
     const output = await run_model(input);
     return process_output(output,img_width,img_height);
