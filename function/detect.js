@@ -1,5 +1,5 @@
 const ort = require("onnxruntime-node");
-const multer = require("multer");
+//const multer = require("multer");
 const sharp = require("sharp");
 //const fs = require("fs");
 
@@ -40,6 +40,7 @@ function main() {
  */
 async function detect_objects_on_image(buf) {
     console.log("Heartbeat of serverless fn`s");
+    console.log(buf);
     const [input,img_width,img_height] = await prepare_input(buf);
     const output = await run_model(input);
     return process_output(output,img_width,img_height);
@@ -172,24 +173,30 @@ const yolo_classes = ['Adidas', 'Apple', 'BMW', 'Citroen', 'Cocacola', 'DHL', 'F
 
 
 
-const upload = multer();
+// const upload = multer();
 module.exports.handler = async (event) => {
     try {
       // Your code here
-      upload.single('test.img');
-      const buffer = event.body;
-      const boxes = detect_objects_on_image(buffer);
+      //console.log(event);
+      let buffer =JSON.parse(event);
+   console.log(buffer);
+      const boxes =  detect_objects_on_image(buffer);
       return {
         statusCode : 200,
         headers : {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
         },
         body : JSON.stringify({message : 'Image received and processed'}),
       }
     } catch (error) {
       return {
         statusCode: 500,
+        headers : {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type',
+        },
         body: JSON.stringify({ error: error.message }),
       };
     }

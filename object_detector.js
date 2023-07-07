@@ -25,6 +25,7 @@ function main() {
      * an array of bounding boxes in format [[x1,y1,x2,y2,object_type,probability],..] as a JSON
      */
     app.post('/detect', upload.single('image_file'), async function (req, res) {
+        console.log(req);
         const boxes = await detect_objects_on_image(req.file.buffer);
         res.json(boxes);
     });
