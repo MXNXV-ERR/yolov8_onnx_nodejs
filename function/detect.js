@@ -1,31 +1,48 @@
 const ort = require("onnxruntime-node");
+const multer = require("multer");
 const sharp = require("sharp");
+const fs = require("fs");
 
-exports.handler = async function (event) {
-  try {
-    const { buffer } = event.body;
-    const boxes = await detectObjectsOnImage(buffer);
-    return {
-      statusCode: 200,
-      body: JSON.stringify(boxes),
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Internal Server Error" }),
-    };
-  }
-};
+/**
+ * Main function that setups and starts a
+ * web server on port 8080
+ */
+function main() {
+    const upload = multer();
 
-async function detectObjectsOnImage(buf) {
+    /**
+     * The site root handler. Returns content of index.html file.
+     */
+    app.get("/", (req,res) => {
+        res.end(fs.readFileSync("index.html", "utf8"))
+    })
+
+    /**
+     * The handler of /detect endpoint that receives uploaded
+     * image file, passes it through YOLOv8 object detection network and returns
+     * an array of bounding boxes in format [[x1,y1,x2,y2,object_type,probability],..] as a JSON
+     */
+    app.post('/detect', upload.single('image_file'), async function (req, res) {
+        const boxes = await detect_objects_on_image(req.file.buffer);
+        res.json(boxes);
+    });
+
+    // app.listen(8080, () => {
+    //     console.log(`Server is listening on port 8080`)
+    // });
+}
+
+/**
+ * Function receives an image, passes it through YOLOv8 neural network
+ * and returns an array of detected objects and their bounding boxes
+ * @param buf Input image body
+ * @returns Array of bounding boxes in format [[x1,y1,x2,y2,object_type,probability],..]
+ */
+async function detect_objects_on_image(buf) {
     const [input,img_width,img_height] = await prepare_input(buf);
     const output = await run_model(input);
     return process_output(output,img_width,img_height);
 }
-
-// Define the remaining helper functions (iou, union, intersection) and the yolo_classes array here
-
 
 /**
  * Function used to convert input image to tensor,
@@ -151,3 +168,17 @@ function intersection(box1,box2) {
  * Array of YOLOv8 class labels
  */
 const yolo_classes = ['Adidas', 'Apple', 'BMW', 'Citroen', 'Cocacola', 'DHL', 'Fedex', 'Ferrari', 'Ford', 'Google', 'Heineken', 'HP', 'Intel', 'McDonalds', 'Mini', 'Nbc', 'Nike', 'Pepsi', 'Porsche', 'Puma', 'RedBull', 'Sprite', 'Starbucks', 'Texaco', 'Unicef', 'Vodafone', 'Yahoo'];
+
+
+
+module.exports.handler = async (event, context) => {
+    try {
+      // Your code here
+      main();
+    } catch (error) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: error.message }),
+      };
+    }
+  };

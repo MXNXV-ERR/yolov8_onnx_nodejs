@@ -4,8 +4,8 @@
   "description": "This is a web interface to [YOLOv8 object detection neural network](https://ultralytics.com/yolov8)\r implemented on [Node.js](https://www.nodejs.org).",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node object_detector.js"
+    "build": "npm install && npm run build:express",
+  "build:express": "node object_detector.js"
   },
   "author": "MXNXV-ERR",
   "license": "ISC",
