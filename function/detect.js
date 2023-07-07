@@ -1,5 +1,5 @@
 const ort = require("onnxruntime-node");
-//const multer = require("multer");
+const multer = require("multer");
 const sharp = require("sharp");
 //const fs = require("fs");
 
@@ -172,14 +172,20 @@ const yolo_classes = ['Adidas', 'Apple', 'BMW', 'Citroen', 'Cocacola', 'DHL', 'F
 
 
 
+const upload = multer();
 module.exports.handler = async (event) => {
     try {
       // Your code here
-      const { buffer } = event.body;
+      upload.single('test.img');
+      const buffer = event.body;
       const boxes = detect_objects_on_image(buffer);
       return {
         statusCode : 200,
-        body : JSON.stringify(boxes+"hello"),
+        headers : {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type',
+        },
+        body : JSON.stringify({message : 'Image received and processed'}),
       }
     } catch (error) {
       return {
