@@ -1,9 +1,7 @@
 [build]
   command = "npm run build"
   functions = "function"
-
-  [functions]
-    included_files = ["function/*.onnx"]
+  included_files = ["function/bestv8.onnx"]
 
 [[redirects]]
   from = "/*"
