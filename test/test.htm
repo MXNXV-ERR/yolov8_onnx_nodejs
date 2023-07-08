@@ -25,7 +25,7 @@
 
             reader.onloadend = function() {
                 const base64Data = reader.result.split(',')[1]; // Extract the base64 string
-                const endpointUrl = 'http://localhost:9999/.netlify/functions/detect'; // Replace with your Netlify function URL
+                const endpointUrl = 'https://darling-ganache-619ee5.netlify.app/.netlify/functions/detect'; // Replace with your Netlify function URL
 
                 // Create the request body
                 const requestBody = {

@@ -2,6 +2,9 @@
   command = "npm run build"
   functions = "function"
 
+  [functions]
+    included_files = ["function/*.onnx"]
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
