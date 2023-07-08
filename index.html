@@ -1,47 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>YOLOv8 Object Detection</title>
+    <title>Send POST Request to Netlify Function</title>
     <style>
-      canvas {
-          display:block;
-          border: 1px solid black;
-          margin-top:10px;
-      }
-    </style>
+        canvas {
+            display:block;
+            border: 1px solid black;
+            margin-top:10px;
+        }
+      </style>
 </head>
 <body>
-    <input id="uploadInput" type="file"/>
+    <h1>Send POST Request to Netlify Function</h1>
+    <input type="file" id="fileInput" accept="image/*" />
+    <button onclick="sendRequest()">Submit</button>
     <canvas></canvas>
-    <script>
-      /**
-       * "Upload" button onClick handler: uploads selected image file
-       * to backend, receives array of detected objects
-       * and draws them on top of image
-       */
-       const input = document.getElementById("uploadInput");
-       input.addEventListener("change",async(event) => {
-           // let data= "";
-          const data = new FormData();
-          console.log(event.target.files[0]);
-           data.append("image_file",event.target.files[0]);
-           const response = await fetch("http://localhost:9999/.netlify/functions/detect",{
-               method:"post",
-               body:data
-           });
-           const boxes = await response.json();
-           draw_image_and_boxes(event.target.files[0],boxes);
-       })
 
-      /**
-       * Function draws the image from provided file
-       * and bounding boxes of detected objects on
-       * top of the image
-       * @param file Uploaded file object
-       * @param boxes Array of bounding boxes in format [[x1,y1,x2,y2,object_type,probability],...]
-       */
-      function draw_image_and_boxes(file,boxes) {
+    <script>
+        function sendRequest() {
+            // Read the selected file as base64
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onloadend = function() {
+                const base64Data = reader.result.split(',')[1]; // Extract the base64 string
+                const endpointUrl = 'https://darling-ganache-619ee5.netlify.app/.netlify/functions/detect'; // Replace with your Netlify function URL
+
+                // Create the request body
+                const requestBody = {
+                    image: base64Data
+                };
+
+                // Send the POST request
+                fetch(endpointUrl, {
+                    method: 'POST',
+                    body: JSON.stringify(requestBody)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Response:', data);
+                    // const boxes = await response.json();
+                    draw_image_and_boxes(file,data);
+                    // Handle the response here
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Handle any errors here
+                });
+            }
+
+            reader.readAsDataURL(file);
+        }
+        function draw_image_and_boxes(file,boxes) {
           const img = new Image()
           img.src = URL.createObjectURL(file);
           img.onload = () => {
@@ -63,6 +74,7 @@
               });
           }
       }
+   
     </script>
 </body>
 </html>

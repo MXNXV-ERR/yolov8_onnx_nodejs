@@ -1,6 +1,7 @@
 const ort = require("onnxruntime-node");
 const sharp = require("sharp");
-
+const fs = require('fs');
+const axios = require("axios");
 
 
 
@@ -49,6 +50,11 @@ async function prepare_input(buf) {
  * @returns Raw output of neural network as a flat array of numbers
  */
 async function run_model(input) {
+    const file = 'https://github.com/MXNXV-ERR/yolov8_onnx_nodejs/blob/main/bestv8.onnx';
+    
+    const ress=await axios.get(file,{responseType:'arraybuffer'});
+    fs.writeFileSync('./bestv8.onnx',ress.data);
+
     const model = await ort.InferenceSession.create("bestv8.onnx");
     input = new ort.Tensor(Float32Array.from(input),[1, 3, 640, 640]);
     const outputs = await model.run({images:input});
