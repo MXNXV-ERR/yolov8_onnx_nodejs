@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build"
+  functions = "function"
+  included_files = ["function/bestv8.onnx"]
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
