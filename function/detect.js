@@ -177,7 +177,8 @@ const yolo_classes = ['Adidas', 'Apple', 'BMW', 'Citroen', 'Cocacola', 'DHL', 'F
 module.exports.handler = async (event) => {
     try {
       // Your code here
-      //console.log(event);
+      console.log(event);
+      console.log(typeof(event));
       let buffer =JSON.parse(event);
    console.log(buffer);
       const boxes =  detect_objects_on_image(buffer);
@@ -186,7 +187,7 @@ module.exports.handler = async (event) => {
         headers : {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Headers': 'Content-Type',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+            // 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
         },
         body : JSON.stringify({message : 'Image received and processed'}),
       }
@@ -196,6 +197,7 @@ module.exports.handler = async (event) => {
         headers : {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Headers': 'Content-Type',
+            // 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
         },
         body: JSON.stringify({ error: error.message }),
       };
