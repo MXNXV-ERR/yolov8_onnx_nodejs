@@ -29,11 +29,11 @@
         }
 
         async function sendBase64Data(base64Data) {
-            const response = await fetch("http://localhost:9999/.netlify/functions/detect", {
+            const response = await fetch("https://localhost:9999/.netlify/functions/detect", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
                     "Access-Control-Allow-Origin" : '*',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ image: base64Data })
             });
