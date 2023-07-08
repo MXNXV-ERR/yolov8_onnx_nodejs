@@ -1,36 +1,8 @@
 const ort = require("onnxruntime-node");
-//const multer = require("multer");
 const sharp = require("sharp");
-//const fs = require("fs");
 
-/**
- * Main function that setups and starts a
- * web server on port 8080
- */
-function main() {
-    // const upload = multer();
 
-    /**
-     * The site root handler. Returns content of index.html file.
-     */
-    // app.get("/", (req,res) => {
-    //     res.end(fs.readFileSync("index.html", "utf8"))
-    // })
 
-    /**
-     * The handler of /detect endpoint that receives uploaded
-     * image file, passes it through YOLOv8 object detection network and returns
-     * an array of bounding boxes in format [[x1,y1,x2,y2,object_type,probability],..] as a JSON
-     */
-    // app.post('/detect', upload.single('image_file'), async function (req, res) {
-    //     const boxes = await detect_objects_on_image(req.file.buffer);
-    //     res.json(boxes);
-    // });
-
-    // app.listen(8080, () => {
-    //     console.log(`Server is listening on port 8080`)
-    // });
-}
 
 /**
  * Function receives an image, passes it through YOLOv8 neural network
@@ -174,32 +146,74 @@ const yolo_classes = ['Adidas', 'Apple', 'BMW', 'Citroen', 'Cocacola', 'DHL', 'F
 
 
 // const upload = multer();
-module.exports.handler = async (event) => {
+// module.exports.handler = upload.single('image_file'),async (req,res) => {
+//     try {
+//         console.log(req.files.buffer)
+//       // Your code here
+//       //console.log(req.body);
+//     //   const temp= sharp(req.body).toBuffer().then(({data})=>{
+//     //     const base64String = data.toString("base64");
+//     //     console.log(base64String);
+//     //   }).catch((error) => {
+//     //     console.error(error);
+//     //   });
+//     //   console.log(temp);
+//     //   res.setHeader('Content-Type', 'application/json');
+//     //   res.setHeader('Access-Control-Allow-Origin', '*');
+//     //   res.statusCode = 200;
+//     //   res.end(JSON.stringify({ message: 'Hello, world!' }));
+//     //   return res;
+// //       console.log(req);
+// //       let buffer = Buffer.from(req.body, 'base64');
+// //       //let buffer =JSON.parse(event);
+// //    console.log(buffer);
+// //       const boxes =  detect_objects_on_image(buffer);
+//       return {
+//         statusCode : 200,
+//         // headers : {
+//         //      "Access-Control-Allow-Origin": "*",
+//         // //     "Access-Control-Allow-Headers": "Content-Type",
+//         // //     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+//         //  },
+//         body : JSON.stringify({message : 'Image received and processed'}),
+//       }
+//     } catch (error) {
+//       return {
+//         statusCode: 500,
+//         // headers : {
+//         //     'Access-Control-Allow-Origin': '*',
+//         //    'Access-Control-Allow-Headers': 'Content-Type',
+//         //     // 'Access-Control-Allow-Methods': 'POST',
+//         //  },
+//         body: JSON.stringify({ error: error.message }),
+//       };
+//     }
+//   };
+
+exports.handler = async (event) => {
     try {
-      // Your code here
-      console.log(event);
-      console.log(typeof(event));
-      let buffer =JSON.parse(event);
-   console.log(buffer);
-      const boxes =  detect_objects_on_image(buffer);
+        console.log( event.body.split(",",2)[1] );
+
+      const base64Data = JSON.parse(event.body).image;
+      console.log("\n\n\n\n\n"+base64Data);
+      const buffer = Buffer.from(base64Data, "base64");
+      const boxes = await detect_objects_on_image(buffer);
       return {
-        statusCode : 200,
-        headers : {
-            "Access-Control-Allow-Origin": '*',
-            //"Access-Control-Allow-Headers": 'Content-Type',
-            // 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+        statusCode: 200,
+        body: JSON.stringify(boxes),
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*", // Set appropriate CORS headers
         },
-        body : JSON.stringify({message : 'Image received and processed'}),
-      }
+      };
     } catch (error) {
       return {
         statusCode: 500,
-        headers : {
-            'Access-Control-Allow-Origin': '*',
-            //'Access-Control-Allow-Headers': 'Content-Type',
-            // 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-        },
         body: JSON.stringify({ error: error.message }),
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*", // Set appropriate CORS headers
+        },
       };
     }
   };

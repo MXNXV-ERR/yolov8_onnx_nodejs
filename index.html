@@ -22,8 +22,10 @@
        */
        const input = document.getElementById("uploadInput");
        input.addEventListener("change",async(event) => {
-           const data = new FormData();
-           data.append("image_file",event.target.files[0],"image_file");
+           // let data= "";
+          const data = new FormData();
+          console.log(event.target.files[0]);
+           data.append("image_file",event.target.files[0]);
            const response = await fetch("http://localhost:9999/.netlify/functions/detect",{
                method:"post",
                body:data
