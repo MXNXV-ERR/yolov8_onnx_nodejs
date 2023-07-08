@@ -2,6 +2,7 @@ const ort = require("onnxruntime-node");
 const sharp = require("sharp");
 const fs = require('fs');
 const axios = require("axios");
+const os = require('os');
 
 
 
@@ -51,11 +52,12 @@ async function prepare_input(buf) {
  */
 async function run_model(input) {
     const file = 'https://github.com/MXNXV-ERR/yolov8_onnx_nodejs/blob/main/bestv8.onnx';
-    
+    const tempDir=os.tmpdir();
+    const filePath = path.join(tempDir, 'bestv8.onnx');
     const ress=await axios.get(file,{responseType:'arraybuffer'});
-    fs.writeFileSync('./bestv8.onnx',ress.data);
+    fs.writeFileSync(filePath,ress.data);
 
-    const model = await ort.InferenceSession.create("bestv8.onnx");
+    const model = await ort.InferenceSession.create(filePath);
     input = new ort.Tensor(Float32Array.from(input),[1, 3, 640, 640]);
     const outputs = await model.run({images:input});
     //sconsole.log(outputs);
